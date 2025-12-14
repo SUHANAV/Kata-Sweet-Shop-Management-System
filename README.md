@@ -34,12 +34,52 @@ cd "c:\Users\hp\Desktop\Suhana Project\backend"; npm run dev
 ```powershell
 cd "c:\Users\hp\Desktop\Suhana Project\frontend"; npm install; npm run dev
 ```
+5. Login with the seeded admin: `admin@example.com` / `adminpass`.
 
 ## Environment
 - Backend config: [backend/.env.example](backend/.env.example)
   - `DATABASE_PATH=./data/sweetshop.db`
   - `JWT_SECRET=change_me`
   - `PORT=4000`
+
+## Project Structure
+```
+Suhana Project/
+├── backend/
+│   ├── src/
+│   │   ├── controllers/      # Express handlers
+│   │   ├── services/         # Business logic (sync, sqlite-backed)
+│   │   ├── repositories/     # Raw SQL helpers using sql.js
+│   │   ├── middleware/       # Auth guards
+│   │   └── db/               # sqlite init + migrations runner
+│   ├── data/                 # sweetshop.db lives here
+│   ├── uploads/              # Multer stores admin-uploaded images
+│   └── tests/                # Jest + Supertest suites
+├── frontend/
+│   └── src/
+│       ├── pages/            # Dashboard, Admin, Auth
+│       ├── components/       # Hero, SweetCard, Cart, etc.
+│       ├── api/              # Axios client with auth header
+│       └── utils/            # Currency + image helpers
+└── docs/
+    └── running-from-scratch.md
+```
+
+## Developer Experience
+- **Scripts (backend)**
+  - `npm run dev` – start Express + sqlite in watch mode
+  - `npm run db:migrate` – apply SQL migrations via sql.js
+  - `npm run db:seed` – ensure default admin exists
+  - `npm test` – Jest + Supertest with coverage
+- **Scripts (frontend)**
+  - `npm run dev` – Vite dev server with `/api` + `/uploads` proxy
+  - `npm run build` – Production bundle
+  - `npm test` – Vitest component/unit suites
+
+## Image Uploads
+- Admin console accepts either hosted URLs or local files.
+- Local files are POSTed to `/api/uploads`, saved under `backend/uploads`, and served via `http://localhost:4000/uploads/...`.
+- The frontend resolves `/uploads/*` paths automatically, so cards, spotlight, and testimonials display freshly uploaded imagery without extra config.
 
 ## API Endpoints
 - Auth:
@@ -66,8 +106,8 @@ cd "c:\Users\hp\Desktop\Suhana Project\frontend"; npm install; npm run dev
 - Admin screens to add/update/delete/restock, now with curated image URLs per batch so storefront cards show real photography
 
 ## Screenshots
-- Dashboard view: ![Dashboard](docs/screenshots/dashboard.png)
-- Admin console: ![Admin Console](docs/screenshots/admin.png)
+- Dashboard view: ![Dashboard](docs/screenshots/Dashboard.png)
+- Admin console: ![Admin Console](docs/screenshots/Admin.png)
 
 ## TDD & Testing
 - Backend tests:
@@ -86,7 +126,3 @@ cd "c:\Users\hp\Desktop\Suhana Project\frontend"; npm test
   - Copilot generated initial scaffolding for Express routes, repository helpers, and React components.
   - ChatGPT assisted in drafting tests, SQL migrations, and refactoring away from Prisma/Docker per new constraints.
 - Reflection: AI accelerated boilerplate creation and helped reason through the ORM-to-SQL shift, while I remained responsible for security, data integrity, and verification.
-
-## Deployment (Optional)
-- Backend: any Node-friendly host (Heroku/AWS). Ensure the `DATABASE_PATH` folder is writable and persisted between deploys.
-- Frontend: Vercel/Netlify serving built `dist`.
